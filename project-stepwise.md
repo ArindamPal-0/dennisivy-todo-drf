@@ -214,3 +214,73 @@ def taskList(request: Request) -> Response:
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
 ```
+
+## Adding rest of the views
+
+### Adding task-detail
+
+file: api/views.py
+```python
+@api_view(['GET'])
+def taskDetail(request: Request, pk: str) -> Response:
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(task, many=False)
+    return Response(serializer.data)
+```
+
+### Adding task-create
+
+file: api/views.py
+```python
+@api_view(['POST'])
+def taskCreate(request: Request) -> Response:
+    serializer = TaskSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+```
+
+### Adding task-update
+
+file: api/views.py
+```python
+@api_view(['POST'])
+def taskUpdate(request: Request, pk: str) -> Response:
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(instance=task, data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+```
+
+### Adding task-delete
+
+file: api/views.py
+```python
+@api_view(['DELETE'])
+def taskDelete(request: Request, pk: str) -> Response:
+    task: Task = Task.objects.get(id=pk)
+    task.delete()
+
+    return Response({"msg": "Item successfully deleted!"})
+```
+
+### Adding all the appropriate urls
+
+file: api/urls.py
+```diff
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.apiOverview, name="api-overview"),
+    path('task-list/', views.taskList, name="task-list"),
++   path('task-detail/<str:pk>/', views.taskDetail, name="task-detail"),
++   path('task-create/', views.taskCreate, name="task-create"),
++   path('task-update/<str:pk>/', views.taskUpdate, name="task-update"),
++   path('task-delete/<str:pk>/', views.taskDelete, name="task-delete")
+]
+```

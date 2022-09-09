@@ -18,8 +18,44 @@ def apiOverview(request: Request) -> Response:
 
     return Response(api_urls)
 
+
 @api_view(['GET'])
 def taskList(request: Request) -> Response:
     tasks: list[Task] = Task.objects.all()
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def taskDetail(request: Request, pk: str) -> Response:
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(task, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def taskCreate(request: Request) -> Response:
+    serializer = TaskSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def taskUpdate(request: Request, pk: str) -> Response:
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(instance=task, data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+def taskDelete(request: Request, pk: str) -> Response:
+    task: Task = Task.objects.get(id=pk)
+    task.delete()
+
+    return Response({"msg": "Item successfully deleted!"})
