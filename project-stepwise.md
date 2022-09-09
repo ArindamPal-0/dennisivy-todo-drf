@@ -15,10 +15,11 @@ $ pipenv shell
 $ pipenv install django
 ```
 
-creating the django project in the current directory:
+creating the django project in the current directory, and also applying migrations.
 
 ```powershell
 $ django-admin startproject todo_drf .
+$ python manage.py migrate
 ```
 
 check if its working by running the dev server.
@@ -44,7 +45,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-### Setting up api todo model, urls, and views
+### Setting up api todo model
 
 creating the todo model.
 
@@ -59,6 +60,15 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 ```
+
+### creating and applying migrations
+
+```powershell
+$ python manage.py makemigrations
+$ python manage.py migrate
+```
+
+### creating urls, and views
 
 setting up the api url routes.
 
