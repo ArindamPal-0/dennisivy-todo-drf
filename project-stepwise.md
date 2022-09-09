@@ -102,3 +102,48 @@ from django.http import JsonResponse
 def apiOverview(request):
     return JsonResponse("API BASE POINT", safe=False)
 ```
+
+## Setting up Django REST Framework
+
+### Installing Django REST Framework
+
+```powershell
+$ pipenv install djangorestframework
+```
+
+### Adding DRF to the project
+
+file: todo_drf/settings.py
+```diff
+INSTALLED_APPS = [
+    ...
+
+    'api.apps.ApiConfig',
++   'rest_framework',
+]
+```
+
+### Converting the view to return DRF response
+
+file: api/views.py
+
+```python
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.request import Request
+
+@api_view(['GET'])
+def apiOverview(request: Request) -> Response:
+
+    api_urls: dict[str, str] = {
+        'List': '/task-list/',
+        'Detail View': '/task-detail/<str:pk>/',
+        'Create': '/task-create/',
+        'Update': '/task-update/<str:pk>',
+        'Delete': '/task-delete/<str:pk>'
+    }
+
+    return Response(api_urls)
+```
+
+you can view the response at the url http://127.0.0.1:8000/api/
